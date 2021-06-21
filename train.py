@@ -7,8 +7,9 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
-from azureml.core.run import Run, Dataset
-from azureml.data import Tabular
+from azureml.core.run import Run
+from azureml.core import Dataset
+#from azureml.data import Tabular
 from azureml.data.dataset_factory import TabularDatasetFactory
 
 
@@ -70,6 +71,9 @@ def main():
 
     accuracy = model.score(x_test, y_test)
     run.log("Accuracy", np.float(accuracy))
+
+    os.makedirs('./outputs', exist_ok=True)
+    joblib.dump(model, f'outputs/model-C={args.C}--max_iter={args.max_iter}.joblib')
 
 if __name__ == '__main__':
     main()
