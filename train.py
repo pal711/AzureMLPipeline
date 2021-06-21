@@ -7,20 +7,10 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
-from azureml.core.run import Run
+from azureml.core.run import Run, Dataset
+from azureml.data import Tabular
 from azureml.data.dataset_factory import TabularDatasetFactory
 
-# TODO: Create TabularDataset using TabularDatasetFactory
-# Data is located at:
-# "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
-
-data_url= "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
-ds= TabularDatasetFactory(path= data_url)
-
-
-x, y = clean_data(ds)
-x_train, y_train, x_test, y_test= train_test_split(x, y, train_size= 0.8, random_state= 711)
-run = Run.get_context()
 
 def clean_data(data):
     # Dict for cleaning data
@@ -49,6 +39,19 @@ def clean_data(data):
     y_df = x_df.pop("y").apply(lambda s: 1 if s == "yes" else 0)
     
     return x_df, y_df 
+
+# TODO: Create TabularDataset using TabularDatasetFactory
+# Data is located at:
+# "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
+
+data_url= "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
+ds= Dataset.Tabular.from_delimited_files(path= data_url)
+
+
+x, y = clean_data(ds)
+x_train, x_test, y_train, y_test= train_test_split(x, y, train_size= 0.8, random_state= 711)
+run = Run.get_context()
+
     
 
 def main():
